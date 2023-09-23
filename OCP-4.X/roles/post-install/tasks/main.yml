@@ -253,11 +253,11 @@
 
   - name: Wait for OVNK new master images to roll out
     command: oc rollout status -n {{ ovn_namespace }} ds/ovnkube-master
-    when: ovnkube_cp_pod == ""
+    when: (ovnkube_cp_pod.stdout) == ""
 
   - name: Wait for OVNK new IC controller images to roll out
     command: oc rollout status -n {{ ovn_namespace }} deployment/ovnkube-control-plane
-    when: ovnkube_cp_pod != ""
+    when: (ovnkube_cp_pod.stdout) != ""
   
   - name: OVN SBDB block
     block:
