@@ -116,13 +116,9 @@ es_server: "{{ lookup('env', 'ES_SERVER')|default('https://search-perfscale-dev-
 openshift_toggle_ovn_patch: "{{ lookup('env', 'OVN_PATCH')|default(false, true) }}"
 openshift_ovn_image: "{{ lookup('env', 'OVN_IMAGE')|default('', true) }}"
 
-# Multus image patch
-openshift_toggle_multus_patch: "{{ lookup('env', 'MULTUS_PATCH')|default(false, true) }}"
-openshift_multus_image: "{{ lookup('env', 'MULTUS_IMAGE')|default('', true) }}"
-
-# Cluster Network Operator image patch
-openshift_toggle_cno_patch: "{{ lookup('env', 'CNO_PATCH')|default(false, true) }}"
-openshift_cno_image: "{{ lookup('env', 'CNO_IMAGE')|default('', true) }}"
+# Cluster Etcd Operator image patch
+openshift_toggle_ceo_patch: "{{ lookup('env', 'CEO_PATCH')|default(false, true) }}"
+openshift_ceo_image: "{{ lookup('env', 'CEO_IMAGE')|default('', true) }}"
 
 # RHACS
 rhacs_enable: "{{ lookup('env', 'RHACS_ENABLE')|default(false, true) }}"

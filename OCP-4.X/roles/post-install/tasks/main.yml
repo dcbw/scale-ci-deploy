@@ -191,34 +191,14 @@
     shell: oc get pods -n {{ ovn_namespace }} | grep ovnkube-master | tail -n1 | awk '{print $1}'
     register: ovnkube_master_pod
 
-  - name: Patch new Cluster Network Operator Image
+  - name: Patch new Cluster etcd Operator Image
     block:
-    - name: Patch new CNO Image
-      command: oc -n openshift-network-operator set image deployment.apps/network-operator network-operator={{openshift_cno_image}}
+    - name: Patch new CEO Image
+      command: oc -n openshift-etcd-operator set image deployment.apps/etcd-operator etcd-operator={{openshift_ceo_image}}
 
-    - name: Wait for CNO image to roll out
-      command: oc rollout status -n openshift-network-operator deployment.apps/network-operator
-    when: openshift_toggle_cno_patch|bool
-
-  - name: Patch new Multus Image
-    block:
-    - name: Patch new Multus Image
-      command: oc -n openshift-network-operator set env deployment.apps/network-operator MULTUS_IMAGE={{openshift_multus_image}}
-
-    - name: Get Multus pod
-      shell: oc get pods -n {{ multus_namespace }} | tail -n1 | awk '{print $1}'
-      register: multus_pod
-
-    - name: Check one Multus pod to see if multus image has been updated
-      shell: oc get pod -n {{ multus_namespace }} {{multus_pod.stdout}} -o json| jq '.spec.containers[] | select(.name=="kube-multus").image'
-      register: multus_image
-      until: (multus_image.stdout) == (openshift_multus_image) or (multus_image.stdout) == ""
-      delay: 1
-      retries: 600
-
-    - name: Wait for new Multus images to roll out
-      command: oc rollout status -n {{ multus_namespace }} ds/multus
-    when: openshift_toggle_multus_patch|bool
+    - name: Wait for CEO image to roll out
+      command: oc rollout status -n openshift-etcd-operator deployment.apps/etcd-operator
+    when: openshift_toggle_ceo_patch|bool
 
   - name: Patch new OVNKubernetes Image
     block:
@@ -272,7 +252,7 @@
     when: openshift_toggle_ovn_relay|bool
   environment:
     KUBECONFIG: "{{ kubeconfig_path }}"
-  when: openshift_toggle_ovn_patch|bool or openshift_toggle_cno_patch|bool or openshift_toggle_multus_patch|bool
+  when: openshift_toggle_ovn_patch|bool or openshift_toggle_ceo_patch|bool
 
 - name: Create machinesets
   shell: |
